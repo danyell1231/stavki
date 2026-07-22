@@ -6,34 +6,75 @@
     <title>Матч: Ставки на команды</title>
     <style>
         :root {
-            --bg-color: #0f172a;
-            --card-bg: #1e293b;
+            --bg-color: #090d16;
+            --card-bg: rgba(19, 28, 46, 0.85);
+            --card-border: #1e293b;
             --text-color: #f8fafc;
             --accent-a: #38bdf8;
             --accent-b: #f43f5e;
-            --btn-a: #0284c7;
-            --btn-a-hover: #0369a1;
-            --btn-b: #e11d48;
-            --btn-b-hover: #be123c;
+            --btn-a: linear-gradient(135deg, #0284c7, #0369a1);
+            --btn-a-hover: linear-gradient(135deg, #0369a1, #075985);
+            --btn-b: linear-gradient(135deg, #e11d48, #be123c);
+            --btn-b-hover: linear-gradient(135deg, #be123c, #9f1239);
         }
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: var(--bg-color);
+            font-family: 'Inter', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: radial-gradient(circle at top, #111e38 0%, var(--bg-color) 70%);
             color: var(--text-color);
             text-align: center;
             margin: 0;
-            padding: 20px 20px 50px 20px;
+            padding: 30px 20px 60px 20px;
+            min-height: 100vh;
+            position: relative;
+            overflow-x: hidden;
         }
+
+        /* Фоновые свиньи */
+        .background-pigs {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: -1;
+            overflow: hidden;
+        }
+        .pig {
+            position: absolute;
+            font-size: 2rem;
+            opacity: 0.12;
+            animation: floatPig 15s linear infinite;
+        }
+        @keyframes floatPig {
+            0% {
+                transform: translateY(110vh) translateX(0) rotate(0deg);
+            }
+            50% {
+                transform: translateY(50vh) translateX(50px) rotate(180deg);
+            }
+            100% {
+                transform: translateY(-10vh) translateX(-50px) rotate(360deg);
+            }
+        }
+
+        header, .timer-container, .user-info-bar, .team-card, .admin-panel, .admin-bets-section, .history-section {
+            position: relative;
+            z-index: 1;
+        }
+
         header {
             display: flex;
             justify-content: space-between;
             align-items: center;
             max-width: 900px;
-            margin: 0 auto 30px auto;
+            margin: 0 auto 25px auto;
             background: var(--card-bg);
-            padding: 15px 25px;
-            border-radius: 16px;
-            border: 1px solid #334155;
+            backdrop-filter: blur(12px);
+            padding: 18px 25px;
+            border-radius: 20px;
+            border: 1px solid var(--card-border);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
             flex-wrap: wrap;
             gap: 15px;
         }
@@ -41,45 +82,53 @@
             text-align: left;
         }
         .mode-toggle {
-            background: #334155;
-            color: white;
-            border: none;
-            padding: 8px 16px;
-            border-radius: 8px;
+            background: #1e293b;
+            color: #cbd5e1;
+            border: 1px solid #334155;
+            padding: 10px 18px;
+            border-radius: 12px;
             cursor: pointer;
-            font-weight: bold;
-            transition: background 0.2s;
+            font-weight: 600;
+            transition: all 0.2s ease;
         }
         .mode-toggle:hover {
-            background: #475569;
+            background: #334155;
+            color: white;
+            border-color: #475569;
         }
         h1 {
-            font-size: 2rem;
-            margin: 0 0 5px 0;
+            font-size: 1.8rem;
+            margin: 0 0 4px 0;
             letter-spacing: -0.5px;
+            background: linear-gradient(90deg, #fff, #94a3b8);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
         }
         p.subtitle {
-            color: #94a3b8;
+            color: #64748b;
             margin: 0;
-            font-size: 0.95rem;
+            font-size: 0.9rem;
         }
         
         /* Таймер */
         .timer-container {
-            background-color: var(--card-bg);
+            background: var(--card-bg);
+            backdrop-filter: blur(12px);
             display: inline-block;
-            padding: 12px 30px;
+            padding: 12px 28px;
             border-radius: 30px;
             margin-bottom: 25px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
-            border: 1px solid #334155;
-            font-size: 1.1rem;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.25);
+            border: 1px solid var(--card-border);
+            font-size: 1rem;
+            color: #94a3b8;
         }
         .timer-container span {
             color: #f59e0b;
-            font-weight: bold;
+            font-weight: 700;
             font-family: monospace;
-            font-size: 1.2rem;
+            font-size: 1.1rem;
+            margin-left: 5px;
         }
 
         .user-info-bar {
@@ -93,17 +142,22 @@
         }
 
         .username-badge {
-            background-color: var(--card-bg);
-            padding: 10px 20px;
+            background: var(--card-bg);
+            backdrop-filter: blur(12px);
+            padding: 12px 24px;
             border-radius: 30px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
-            font-size: 1.1rem;
-            border: 1px solid #334155;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.25);
+            font-size: 1rem;
+            border: 1px solid var(--card-border);
         }
         .username-badge span {
-            color: #38bdf8;
-            font-weight: bold;
+            color: var(--accent-a);
+            font-weight: 700;
             cursor: pointer;
+            transition: opacity 0.2s;
+        }
+        .username-badge span:hover {
+            opacity: 0.8;
         }
 
         .arena {
@@ -116,142 +170,163 @@
             margin: 0 auto;
         }
         .team-card {
-            background-color: var(--card-bg);
-            border-radius: 20px;
-            padding: 25px;
-            width: 320px;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.4);
+            background: var(--card-bg);
+            backdrop-filter: blur(12px);
+            border-radius: 24px;
+            padding: 30px;
+            width: 340px;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.4);
             display: flex;
             flex-direction: column;
             justify-content: space-between;
-            border: 1px solid #334155;
-            transition: transform 0.2s;
+            border: 1px solid var(--card-border);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            position: relative;
+            overflow: hidden;
         }
         .team-card:hover {
-            transform: translateY(-5px);
+            transform: translateY(-6px);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.5);
         }
         h2 {
             margin-top: 0;
-            font-size: 1.8rem;
+            font-size: 1.5rem;
+            font-weight: 700;
         }
         .team-a-title { color: var(--accent-a); }
         .team-b-title { color: var(--accent-b); }
 
         .stats-box {
-            background: #0f172a;
-            border-radius: 12px;
-            padding: 15px;
-            margin: 15px 0;
+            background: #090d16;
+            border-radius: 14px;
+            padding: 18px;
+            margin: 20px 0;
+            border: 1px solid #1a2333;
         }
         .stats-label {
-            font-size: 0.85rem;
-            color: #94a3b8;
+            font-size: 0.75rem;
+            color: #64748b;
             text-transform: uppercase;
-            letter-spacing: 1px;
+            letter-spacing: 1.5px;
+            font-weight: 600;
         }
         .stats-value {
-            font-size: 1.8rem;
-            font-weight: bold;
+            font-size: 2rem;
+            font-weight: 800;
             margin-top: 5px;
+            letter-spacing: -0.5px;
         }
         .input-group {
-            margin: 15px 0;
+            margin: 15px 0 25px 0;
             text-align: left;
         }
         .input-group label {
             display: block;
-            font-size: 0.85rem;
+            font-size: 0.8rem;
             color: #94a3b8;
-            margin-bottom: 5px;
+            margin-bottom: 8px;
+            font-weight: 500;
         }
         .input-group input {
             width: 100%;
-            padding: 10px 14px;
+            padding: 12px 16px;
             box-sizing: border-box;
-            background-color: #0f172a;
-            border: 1px solid #475569;
-            border-radius: 8px;
+            background-color: #090d16;
+            border: 1px solid #27354f;
+            border-radius: 12px;
             color: white;
             font-size: 1rem;
             outline: none;
-            transition: border-color 0.2s;
+            transition: all 0.2s ease;
         }
         .input-group input:focus {
-            border-color: #38bdf8;
+            border-color: var(--accent-a);
+            box-shadow: 0 0 0 3px rgba(56, 189, 248, 0.15);
         }
         button.bet-btn {
             color: white;
             border: none;
-            padding: 12px;
-            font-size: 1rem;
-            font-weight: bold;
-            border-radius: 10px;
+            padding: 14px;
+            font-size: 0.95rem;
+            font-weight: 700;
+            border-radius: 14px;
             cursor: pointer;
-            transition: background-color 0.2s, transform 0.1s;
+            transition: all 0.2s ease;
             width: 100%;
-            margin-top: 10px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
         }
         button.bet-btn:active {
             transform: scale(0.98);
         }
         button.bet-btn:disabled {
-            background-color: #475569 !important;
+            background: #334155 !important;
             cursor: not-allowed;
-            opacity: 0.6;
+            opacity: 0.5;
+            box-shadow: none;
         }
-        .btn-a { background-color: var(--btn-a); }
-        .btn-a:hover { background-color: var(--btn-a-hover); }
-        .btn-b { background-color: var(--btn-b); }
-        .btn-b:hover { background-color: var(--btn-b-hover); }
+        .btn-a { background: var(--btn-a); }
+        .btn-a:hover { background: var(--btn-a-hover); box-shadow: 0 6px 16px rgba(2, 132, 199, 0.4); }
+        .btn-b { background: var(--btn-b); }
+        .btn-b:hover { background: var(--btn-b-hover); box-shadow: 0 6px 16px rgba(225, 29, 72, 0.4); }
 
         /* Админ панель */
         .admin-panel {
             display: none;
             max-width: 900px;
             margin: 30px auto 0 auto;
-            background-color: #1e293b;
+            background-color: var(--card-bg);
+            backdrop-filter: blur(12px);
             border: 2px dashed #f59e0b;
             padding: 25px;
-            border-radius: 16px;
+            border-radius: 20px;
             text-align: left;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
         }
         .admin-panel h3 {
             margin-top: 0;
             color: #f59e0b;
-            font-size: 1.3rem;
-            border-bottom: 1px solid #334155;
-            padding-bottom: 10px;
+            font-size: 1.2rem;
+            border-bottom: 1px solid var(--card-border);
+            padding-bottom: 12px;
         }
         .admin-controls {
             display: flex;
-            gap: 15px;
+            gap: 12px;
             flex-wrap: wrap;
             margin-top: 15px;
         }
         .admin-btn {
-            background-color: #334155;
-            color: white;
-            border: none;
-            padding: 10px 18px;
-            border-radius: 8px;
+            background-color: #1e293b;
+            color: #cbd5e1;
+            border: 1px solid #334155;
+            padding: 10px 16px;
+            border-radius: 10px;
             cursor: pointer;
-            font-weight: bold;
-            transition: background 0.2s;
+            font-weight: 600;
+            font-size: 0.9rem;
+            transition: all 0.2s ease;
         }
         .admin-btn:hover {
-            background-color: #475569;
+            background-color: #334155;
+            color: white;
         }
         .admin-btn.danger {
-            background-color: #dc2626;
+            background-color: rgba(220, 38, 38, 0.15);
+            border-color: rgba(220, 38, 38, 0.3);
+            color: #f87171;
         }
         .admin-btn.danger:hover {
-            background-color: #b91c1c;
+            background-color: #dc2626;
+            color: white;
         }
         .admin-btn.success {
-            background-color: #16a34a;
+            background-color: rgba(22, 163, 74, 0.15);
+            border-color: rgba(22, 163, 74, 0.3);
+            color: #4ade80;
         }
         .admin-btn.success:hover {
-            background-color: #15803d;
+            background-color: #16a34a;
+            color: white;
         }
 
         /* Секция списка ставок для админа */
@@ -259,18 +334,20 @@
             display: none;
             max-width: 900px;
             margin: 20px auto 0 auto;
-            background-color: #1e293b;
+            background-color: var(--card-bg);
+            backdrop-filter: blur(12px);
             border: 1px solid #f59e0b;
-            padding: 20px;
-            border-radius: 16px;
+            padding: 25px;
+            border-radius: 20px;
             text-align: left;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
         }
         .admin-bets-section h4 {
             margin-top: 0;
             color: #f59e0b;
             font-size: 1.1rem;
-            border-bottom: 1px solid #334155;
-            padding-bottom: 8px;
+            border-bottom: 1px solid var(--card-border);
+            padding-bottom: 10px;
         }
         .bet-table {
             width: 100%;
@@ -279,22 +356,24 @@
             font-size: 0.9rem;
         }
         .bet-table th, .bet-table td {
-            padding: 8px 12px;
-            border-bottom: 1px solid #334155;
+            padding: 10px 14px;
+            border-bottom: 1px solid var(--card-border);
             text-align: left;
         }
         .bet-table th {
-            color: #94a3b8;
+            color: #64748b;
             font-weight: 600;
         }
         .delete-bet-btn {
             background-color: #ef4444;
             color: white;
             border: none;
-            padding: 4px 8px;
-            border-radius: 4px;
+            padding: 6px 10px;
+            border-radius: 6px;
             cursor: pointer;
             font-size: 0.8rem;
+            font-weight: 600;
+            transition: background 0.2s;
         }
         .delete-bet-btn:hover {
             background-color: #dc2626;
@@ -304,30 +383,39 @@
             max-width: 900px;
             margin: 30px auto 0 auto;
             background-color: var(--card-bg);
-            padding: 20px;
-            border-radius: 16px;
-            border: 1px solid #334155;
+            backdrop-filter: blur(12px);
+            padding: 25px;
+            border-radius: 20px;
+            border: 1px solid var(--card-border);
             text-align: left;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
         }
         .history-section h3 {
             margin-top: 0;
             color: #e2e8f0;
-            font-size: 1.2rem;
-            border-bottom: 1px solid #334155;
-            padding-bottom: 10px;
+            font-size: 1.1rem;
+            border-bottom: 1px solid var(--card-border);
+            padding-bottom: 12px;
         }
         #historyList {
             list-style: none;
             padding: 0;
             margin: 0;
-            max-height: 150px;
+            max-height: 160px;
             overflow-y: auto;
         }
+        #historyList::-webkit-scrollbar {
+            width: 6px;
+        }
+        #historyList::-webkit-scrollbar-thumb {
+            background: #27354f;
+            border-radius: 4px;
+        }
         #historyList li {
-            padding: 8px 10px;
-            border-bottom: 1px solid #334155;
+            padding: 10px 12px;
+            border-bottom: 1px solid var(--card-border);
             font-size: 0.9rem;
-            color: #cbd5e1;
+            color: #94a3b8;
         }
         #historyList li:last-child {
             border-bottom: none;
@@ -335,6 +423,9 @@
     </style>
 </head>
 <body>
+
+    <!-- Фоновые свиньи -->
+    <div class="background-pigs" id="backgroundPigs"></div>
 
     <header>
         <div class="header-left">
@@ -344,9 +435,9 @@
         <button class="mode-toggle" id="modeToggleBtn" onclick="toggleAdminMode()">Войти как Админ</button>
     </header>
 
-    <!-- Таймер до субботы 18:00 -->
+    <!-- Таймер до субботы 18:00 МСК -->
     <div class="timer-container">
-        До закрытия ставок: <span id="countdown">Загрузка...</span>
+        До субботы 18:00 (МСК): <span id="countdown">Загрузка...</span>
     </div>
 
     <div class="user-info-bar">
@@ -362,7 +453,7 @@
                 <h2 class="team-a-title">Наведавшие побед</h2>
                 <div class="stats-box">
                     <div class="stats-label">Всего поставлено</div>
-                    <div class="stats-value" id="totalA">0</div>
+                    <div class="stats-value" id="totalA" style="color: var(--accent-a);">0</div>
                 </div>
                 <div class="input-group">
                     <label for="amountA">Сумма ставки:</label>
@@ -378,7 +469,7 @@
                 <h2 class="team-b-title">Накормим белого</h2>
                 <div class="stats-box">
                     <div class="stats-label">Всего поставлено</div>
-                    <div class="stats-value" id="totalB">0</div>
+                    <div class="stats-value" id="totalB" style="color: var(--accent-b);">0</div>
                 </div>
                 <div class="input-group">
                     <label for="amountB">Сумма ставки:</label>
@@ -392,13 +483,13 @@
     <!-- Админ-панель (скрыта по умолчанию) -->
     <div class="admin-panel" id="adminPanel">
         <h3>Панель администратора</h3>
-        <p style="color: #94a3b8; font-size: 0.9rem; margin-top: 5px;">Управление матчем и распределение выигрышей:</p>
+        <p style="color: #64748b; font-size: 0.9rem; margin-top: 5px;">Управление матчем и распределение выигрышей:</p>
         <div class="admin-controls">
-            <button class="admin-btn success" onclick="finishMatch('A')">Победили Наведавшие побед (Выдать выигрыш)</button>
-            <button class="admin-btn success" onclick="finishMatch('B')">Победил Накормим белого (Выдать выигрыш)</button>
-            <button class="admin-btn" onclick="toggleBettingLock()">Переключить прием ставок (Откр/Закр)</button>
+            <button class="admin-btn success" onclick="finishMatch('A')">Победили Наведавшие побед</button>
+            <button class="admin-btn success" onclick="finishMatch('B')">Победил Накормим белого</button>
+            <button class="admin-btn" onclick="toggleBettingLock()">Переключить прием ставок</button>
             <button class="admin-btn danger" onclick="resetVoting()">Сбросить банки команд</button>
-            <button class="admin-btn danger" onclick="resetAllData()">Сбросить всё (включая имя)</button>
+            <button class="admin-btn danger" onclick="resetAllData()">Сбросить всё</button>
         </div>
     </div>
 
@@ -430,12 +521,21 @@
     </div>
 
     <script>
-        // Сразу при заходе на сайт запрашиваем имя и пароль доступа
-        let username = localStorage.getItem('username');
-        let isAuthorized = localStorage.getItem('isAuthorized') === 'true';
+        // Генерация свиней на фоне
+        const pigsContainer = document.getElementById('backgroundPigs');
+        const pigCount = 12;
+        for (let i = 0; i < pigCount; i++) {
+            const pig = document.createElement('div');
+            pig.classList.add('pig');
+            pig.innerText = '🐖';
+            pig.style.left = `${Math.random() * 100}%`;
+            pig.style.top = `${Math.random() * 100}%`;
+            pig.style.animationDuration = `${10 + Math.random() * 15}s`;
+            pig.style.animationDelay = `-${Math.random() * 15}s`;
+            pigsContainer.appendChild(pig);
+        }
 
-        // Пароль для доступа к сайту (можете изменить здесь)
-        const SITE_PASSWORD = '123'; 
+        let username = localStorage.getItem('username');
 
         function checkAccess() {
             while (!username || username.trim() === '') {
@@ -445,21 +545,6 @@
                     localStorage.setItem('username', username);
                 } else {
                     alert('Имя обязательно для входа!');
-                }
-            }
-
-            while (!isAuthorized) {
-                let inputPass = prompt(`Введите пароль для доступа к сайту, ${username}:`);
-                if (inputPass === SITE_PASSWORD) {
-                    isAuthorized = true;
-                    localStorage.setItem('isAuthorized', 'true');
-                    alert('Доступ разрешен!');
-                } else if (inputPass === null) {
-                    alert('Вход отменен.');
-                    location.reload();
-                    return;
-                } else {
-                    alert('Неверный пароль! Попробуйте снова.');
                 }
             }
         }
@@ -477,7 +562,6 @@
             }
         }
 
-        // Инициализация хранилища
         let totalA = localStorage.getItem('totalA') !== null ? parseInt(localStorage.getItem('totalA')) : 0;
         let totalB = localStorage.getItem('totalB') !== null ? parseInt(localStorage.getItem('totalB')) : 0;
         let history = localStorage.getItem('history') ? JSON.parse(localStorage.getItem('history')) : [];
@@ -527,7 +611,7 @@
                 adminBetsSection.style.display = 'none';
                 toggleBtn.innerText = 'Войти как Админ';
                 subtitle.innerText = 'Режим: Обычный пользователь';
-                subtitle.style.color = '#94a3b8';
+                subtitle.style.color = '#64748b';
             }
             updateBettingLockUI();
         }
@@ -555,21 +639,31 @@
             alert(isBettingClosed ? 'Прием ставок закрыт администратором.' : 'Прием ставок открыт!');
         }
 
-        // Таймер до ближайшей субботы 18:00
+        // Таймер до ближайшей субботы 18:00 по МСК (UTC+3)
         function updateCountdown() {
             const now = new Date();
-            let target = new Date();
-            let dayOfWeek = now.getDay();
-            let distance = (6 - dayOfWeek + 7) % 7;
             
-            if (distance === 0 && (now.getHours() > 18 || (now.getHours() === 18 && now.getMinutes() > 0))) {
-                distance = 7;
-            }
+            // Текущее время в миллисекундах по МСК (UTC+3)
+            const utc = now.getTime() + (now.getTimezoneOffset() * 60000);
+            const mskTime = new Date(utc + (3600000 * 3));
             
-            target.setDate(now.getDate() + distance);
-            target.setHours(18, 0, 0, 0);
+            let targetMsk = new Date(mskTime);
+            let dayOfWeek = mskTime.getDay(); // 0 - воскресенье, 6 - суббота
+            
+            // Считаем сколько дней осталось до субботы (6)
+            let daysUntilSaturday = (6 - dayOfWeek + 7) % 7;
+            
+            targetMsk.setDate(targetMsk.getDate() + daysUntilSaturday);
+            targetMsk.setHours(18, 0, 0, 0);
 
-            const diff = target - now;
+            // Если сегодня суббота и 18:00 уже прошло, переносим цель на следующую субботу
+            if (dayOfWeek === 6 && mskTime >= targetMsk) {
+                targetMsk.setDate(targetMsk.getDate() + 7);
+            }
+
+            // Переводим целевое время МСК обратно в локальное время браузера
+            const targetLocalTime = new Date(targetMsk.getTime() - (3 * 3600000) - (now.getTimezoneOffset() * 60000));
+            const diff = targetLocalTime - now;
 
             if (diff <= 0) {
                 document.getElementById('countdown').innerText = 'Время вышло!';
@@ -633,7 +727,7 @@
                 localStorage.setItem('totalB', totalB);
             }
 
-            const record = `Ставка: ${betAmount} монет на ${teamName}`;
+            const record = `Ставка: ${betAmount} монет на "${teamName}"`;
             history.unshift(record);
             if (history.length > 15) history.pop();
             localStorage.setItem('history', JSON.stringify(history));
@@ -649,7 +743,7 @@
             localStorage.setItem('allBets', JSON.stringify(allBets));
 
             updateUI();
-            alert(`Успешно! Вы поставили ${betAmount} монет на ${teamName}.`);
+            alert(`Успешно! Вы поставили ${betAmount} монет на "${teamName}".`);
         }
 
         function renderAdminBets() {
@@ -657,7 +751,7 @@
             tbody.innerHTML = '';
 
             if (allBets.length === 0) {
-                tbody.innerHTML = '<tr><td colspan="4" style="text-align: center; color: #94a3b8;">Нет активных ставок</td></tr>';
+                tbody.innerHTML = '<tr><td colspan="4" style="text-align: center; color: #64748b;">Нет активных ставок</td></tr>';
                 return;
             }
 

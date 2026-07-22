@@ -1,0 +1,748 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Матч: Ставки на команды</title>
+    <style>
+        :root {
+            --bg-color: #0f172a;
+            --card-bg: #1e293b;
+            --text-color: #f8fafc;
+            --accent-a: #38bdf8;
+            --accent-b: #f43f5e;
+            --btn-a: #0284c7;
+            --btn-a-hover: #0369a1;
+            --btn-b: #e11d48;
+            --btn-b-hover: #be123c;
+        }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            text-align: center;
+            margin: 0;
+            padding: 20px 20px 50px 20px;
+        }
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            max-width: 900px;
+            margin: 0 auto 30px auto;
+            background: var(--card-bg);
+            padding: 15px 25px;
+            border-radius: 16px;
+            border: 1px solid #334155;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+        .header-left {
+            text-align: left;
+        }
+        .mode-toggle {
+            background: #334155;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: background 0.2s;
+        }
+        .mode-toggle:hover {
+            background: #475569;
+        }
+        h1 {
+            font-size: 2rem;
+            margin: 0 0 5px 0;
+            letter-spacing: -0.5px;
+        }
+        p.subtitle {
+            color: #94a3b8;
+            margin: 0;
+            font-size: 0.95rem;
+        }
+        
+        /* Таймер */
+        .timer-container {
+            background-color: var(--card-bg);
+            display: inline-block;
+            padding: 12px 30px;
+            border-radius: 30px;
+            margin-bottom: 25px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+            border: 1px solid #334155;
+            font-size: 1.1rem;
+        }
+        .timer-container span {
+            color: #f59e0b;
+            font-weight: bold;
+            font-family: monospace;
+            font-size: 1.2rem;
+        }
+
+        .user-info-bar {
+            max-width: 900px;
+            margin: 0 auto 25px auto;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+
+        .username-badge {
+            background-color: var(--card-bg);
+            padding: 10px 20px;
+            border-radius: 30px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+            font-size: 1.1rem;
+            border: 1px solid #334155;
+        }
+        .username-badge span {
+            color: #38bdf8;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .arena {
+            display: flex;
+            justify-content: center;
+            align-items: stretch;
+            gap: 30px;
+            flex-wrap: wrap;
+            max-width: 900px;
+            margin: 0 auto;
+        }
+        .team-card {
+            background-color: var(--card-bg);
+            border-radius: 20px;
+            padding: 25px;
+            width: 320px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.4);
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            border: 1px solid #334155;
+            transition: transform 0.2s;
+        }
+        .team-card:hover {
+            transform: translateY(-5px);
+        }
+        h2 {
+            margin-top: 0;
+            font-size: 1.8rem;
+        }
+        .team-a-title { color: var(--accent-a); }
+        .team-b-title { color: var(--accent-b); }
+
+        .stats-box {
+            background: #0f172a;
+            border-radius: 12px;
+            padding: 15px;
+            margin: 15px 0;
+        }
+        .stats-label {
+            font-size: 0.85rem;
+            color: #94a3b8;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        .stats-value {
+            font-size: 1.8rem;
+            font-weight: bold;
+            margin-top: 5px;
+        }
+        .input-group {
+            margin: 15px 0;
+            text-align: left;
+        }
+        .input-group label {
+            display: block;
+            font-size: 0.85rem;
+            color: #94a3b8;
+            margin-bottom: 5px;
+        }
+        .input-group input {
+            width: 100%;
+            padding: 10px 14px;
+            box-sizing: border-box;
+            background-color: #0f172a;
+            border: 1px solid #475569;
+            border-radius: 8px;
+            color: white;
+            font-size: 1rem;
+            outline: none;
+            transition: border-color 0.2s;
+        }
+        .input-group input:focus {
+            border-color: #38bdf8;
+        }
+        button.bet-btn {
+            color: white;
+            border: none;
+            padding: 12px;
+            font-size: 1rem;
+            font-weight: bold;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: background-color 0.2s, transform 0.1s;
+            width: 100%;
+            margin-top: 10px;
+        }
+        button.bet-btn:active {
+            transform: scale(0.98);
+        }
+        button.bet-btn:disabled {
+            background-color: #475569 !important;
+            cursor: not-allowed;
+            opacity: 0.6;
+        }
+        .btn-a { background-color: var(--btn-a); }
+        .btn-a:hover { background-color: var(--btn-a-hover); }
+        .btn-b { background-color: var(--btn-b); }
+        .btn-b:hover { background-color: var(--btn-b-hover); }
+
+        /* Админ панель */
+        .admin-panel {
+            display: none;
+            max-width: 900px;
+            margin: 30px auto 0 auto;
+            background-color: #1e293b;
+            border: 2px dashed #f59e0b;
+            padding: 25px;
+            border-radius: 16px;
+            text-align: left;
+        }
+        .admin-panel h3 {
+            margin-top: 0;
+            color: #f59e0b;
+            font-size: 1.3rem;
+            border-bottom: 1px solid #334155;
+            padding-bottom: 10px;
+        }
+        .admin-controls {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+            margin-top: 15px;
+        }
+        .admin-btn {
+            background-color: #334155;
+            color: white;
+            border: none;
+            padding: 10px 18px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: background 0.2s;
+        }
+        .admin-btn:hover {
+            background-color: #475569;
+        }
+        .admin-btn.danger {
+            background-color: #dc2626;
+        }
+        .admin-btn.danger:hover {
+            background-color: #b91c1c;
+        }
+        .admin-btn.success {
+            background-color: #16a34a;
+        }
+        .admin-btn.success:hover {
+            background-color: #15803d;
+        }
+
+        /* Секция списка ставок для админа */
+        .admin-bets-section {
+            display: none;
+            max-width: 900px;
+            margin: 20px auto 0 auto;
+            background-color: #1e293b;
+            border: 1px solid #f59e0b;
+            padding: 20px;
+            border-radius: 16px;
+            text-align: left;
+        }
+        .admin-bets-section h4 {
+            margin-top: 0;
+            color: #f59e0b;
+            font-size: 1.1rem;
+            border-bottom: 1px solid #334155;
+            padding-bottom: 8px;
+        }
+        .bet-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+            font-size: 0.9rem;
+        }
+        .bet-table th, .bet-table td {
+            padding: 8px 12px;
+            border-bottom: 1px solid #334155;
+            text-align: left;
+        }
+        .bet-table th {
+            color: #94a3b8;
+            font-weight: 600;
+        }
+        .delete-bet-btn {
+            background-color: #ef4444;
+            color: white;
+            border: none;
+            padding: 4px 8px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.8rem;
+        }
+        .delete-bet-btn:hover {
+            background-color: #dc2626;
+        }
+
+        .history-section {
+            max-width: 900px;
+            margin: 30px auto 0 auto;
+            background-color: var(--card-bg);
+            padding: 20px;
+            border-radius: 16px;
+            border: 1px solid #334155;
+            text-align: left;
+        }
+        .history-section h3 {
+            margin-top: 0;
+            color: #e2e8f0;
+            font-size: 1.2rem;
+            border-bottom: 1px solid #334155;
+            padding-bottom: 10px;
+        }
+        #historyList {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+            max-height: 150px;
+            overflow-y: auto;
+        }
+        #historyList li {
+            padding: 8px 10px;
+            border-bottom: 1px solid #334155;
+            font-size: 0.9rem;
+            color: #cbd5e1;
+        }
+        #historyList li:last-child {
+            border-bottom: none;
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="header-left">
+            <h1>Интерактивные Ставки</h1>
+            <p class="subtitle" id="roleSubtitle">Режим: Обычный пользователь</p>
+        </div>
+        <button class="mode-toggle" id="modeToggleBtn" onclick="toggleAdminMode()">Войти как Админ</button>
+    </header>
+
+    <!-- Таймер до субботы 18:00 -->
+    <div class="timer-container">
+        До закрытия ставок: <span id="countdown">Загрузка...</span>
+    </div>
+
+    <div class="user-info-bar">
+        <div class="username-badge">
+            Игрок: <span id="currentUsername" onclick="changeUsername()" title="Нажмите, чтобы изменить имя">Гость</span> ✏️
+        </div>
+    </div>
+
+    <div class="arena">
+        <!-- Команда А -->
+        <div class="team-card">
+            <div>
+                <h2 class="team-a-title">Наведавшие побед</h2>
+                <div class="stats-box">
+                    <div class="stats-label">Всего поставлено</div>
+                    <div class="stats-value" id="totalA">0</div>
+                </div>
+                <div class="input-group">
+                    <label for="amountA">Сумма ставки:</label>
+                    <input type="number" id="amountA" min="1" value="100">
+                </div>
+            </div>
+            <button class="bet-btn btn-a" id="btnA" onclick="placeBet('A')">Поставить на Наведавшие побед</button>
+        </div>
+
+        <!-- Команда Б -->
+        <div class="team-card">
+            <div>
+                <h2 class="team-b-title">Накормим белого</h2>
+                <div class="stats-box">
+                    <div class="stats-label">Всего поставлено</div>
+                    <div class="stats-value" id="totalB">0</div>
+                </div>
+                <div class="input-group">
+                    <label for="amountB">Сумма ставки:</label>
+                    <input type="number" id="amountB" min="1" value="100">
+                </div>
+            </div>
+            <button class="bet-btn btn-b" id="btnB" onclick="placeBet('B')">Поставить на Накормим белого</button>
+        </div>
+    </div>
+
+    <!-- Админ-панель (скрыта по умолчанию) -->
+    <div class="admin-panel" id="adminPanel">
+        <h3>Панель администратора</h3>
+        <p style="color: #94a3b8; font-size: 0.9rem; margin-top: 5px;">Управление матчем и распределение выигрышей:</p>
+        <div class="admin-controls">
+            <button class="admin-btn success" onclick="finishMatch('A')">Победили Наведавшие побед (Выдать выигрыш)</button>
+            <button class="admin-btn success" onclick="finishMatch('B')">Победил Накормим белого (Выдать выигрыш)</button>
+            <button class="admin-btn" onclick="toggleBettingLock()">Переключить прием ставок (Откр/Закр)</button>
+            <button class="admin-btn danger" onclick="resetVoting()">Сбросить банки команд</button>
+            <button class="admin-btn danger" onclick="resetAllData()">Сбросить всё (включая имя)</button>
+        </div>
+    </div>
+
+    <!-- Секция полного списка ставок (только для админа) -->
+    <div class="admin-bets-section" id="adminBetsSection">
+        <h4>Список всех ставок пользователей (видно только Админу)</h4>
+        <div style="overflow-x: auto;">
+            <table class="bet-table">
+                <thead>
+                    <tr>
+                        <th>Игрок</th>
+                        <th>Команда</th>
+                        <th>Сумма</th>
+                        <th>Действие</th>
+                    </tr>
+                </thead>
+                <tbody id="adminBetsTableBody">
+                    <!-- Заполняется через JS -->
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <div class="history-section">
+        <h3>История ваших ставок</h3>
+        <ul id="historyList">
+            <li>Ставок пока нет...</li>
+        </ul>
+    </div>
+
+    <script>
+        // Сразу при заходе на сайт запрашиваем имя и пароль доступа
+        let username = localStorage.getItem('username');
+        let isAuthorized = localStorage.getItem('isAuthorized') === 'true';
+
+        // Пароль для доступа к сайту (можете изменить здесь)
+        const SITE_PASSWORD = '123'; 
+
+        function checkAccess() {
+            while (!username || username.trim() === '') {
+                let inputName = prompt('Введите ваше имя для входа на сайт:');
+                if (inputName !== null && inputName.trim() !== '') {
+                    username = inputName.trim();
+                    localStorage.setItem('username', username);
+                } else {
+                    alert('Имя обязательно для входа!');
+                }
+            }
+
+            while (!isAuthorized) {
+                let inputPass = prompt(`Введите пароль для доступа к сайту, ${username}:`);
+                if (inputPass === SITE_PASSWORD) {
+                    isAuthorized = true;
+                    localStorage.setItem('isAuthorized', 'true');
+                    alert('Доступ разрешен!');
+                } else if (inputPass === null) {
+                    alert('Вход отменен.');
+                    location.reload();
+                    return;
+                } else {
+                    alert('Неверный пароль! Попробуйте снова.');
+                }
+            }
+        }
+
+        checkAccess();
+        document.getElementById('currentUsername').innerText = username;
+
+        function changeUsername() {
+            const newName = prompt('Изменить ваше имя:', username);
+            if (newName && newName.trim() !== '') {
+                username = newName.trim();
+                localStorage.setItem('username', username);
+                document.getElementById('currentUsername').innerText = username;
+                alert('Имя успешно изменено!');
+            }
+        }
+
+        // Инициализация хранилища
+        let totalA = localStorage.getItem('totalA') !== null ? parseInt(localStorage.getItem('totalA')) : 0;
+        let totalB = localStorage.getItem('totalB') !== null ? parseInt(localStorage.getItem('totalB')) : 0;
+        let history = localStorage.getItem('history') ? JSON.parse(localStorage.getItem('history')) : [];
+        let allBets = localStorage.getItem('allBets') ? JSON.parse(localStorage.getItem('allBets')) : [];
+        let isAdmin = localStorage.getItem('isAdmin') === 'true';
+        let isBettingClosed = localStorage.getItem('isBettingClosed') === 'true';
+
+        applyAdminState();
+        updateUI();
+
+        function toggleAdminMode() {
+            if (!isAdmin) {
+                const pass = prompt('Введите пароль администратора:');
+                if (pass === 'admin123') {
+                    isAdmin = true;
+                    localStorage.setItem('isAdmin', 'true');
+                    alert('Режим администратора активирован!');
+                } else if (pass !== null) {
+                    alert('Неверный пароль!');
+                    return;
+                } else {
+                    return;
+                }
+            } else {
+                isAdmin = false;
+                localStorage.setItem('isAdmin', 'false');
+                alert('Вы вышли из режима администратора.');
+            }
+            applyAdminState();
+        }
+
+        function applyAdminState() {
+            const panel = document.getElementById('adminPanel');
+            const adminBetsSection = document.getElementById('adminBetsSection');
+            const toggleBtn = document.getElementById('modeToggleBtn');
+            const subtitle = document.getElementById('roleSubtitle');
+
+            if (isAdmin) {
+                panel.style.display = 'block';
+                adminBetsSection.style.display = 'block';
+                toggleBtn.innerText = 'Выйти из админки';
+                subtitle.innerText = 'Режим: Администратор';
+                subtitle.style.color = '#f59e0b';
+                renderAdminBets();
+            } else {
+                panel.style.display = 'none';
+                adminBetsSection.style.display = 'none';
+                toggleBtn.innerText = 'Войти как Админ';
+                subtitle.innerText = 'Режим: Обычный пользователь';
+                subtitle.style.color = '#94a3b8';
+            }
+            updateBettingLockUI();
+        }
+
+        function updateBettingLockUI() {
+            const btnA = document.getElementById('btnA');
+            const btnB = document.getElementById('btnB');
+            if (isBettingClosed) {
+                btnA.disabled = true;
+                btnB.disabled = true;
+                btnA.innerText = 'Ставки закрыты';
+                btnB.innerText = 'Ставки закрыты';
+            } else {
+                btnA.disabled = false;
+                btnB.disabled = false;
+                btnA.innerText = 'Поставить на Наведавшие побед';
+                btnB.innerText = 'Поставить на Накормим белого';
+            }
+        }
+
+        function toggleBettingLock() {
+            isBettingClosed = !isBettingClosed;
+            localStorage.setItem('isBettingClosed', isBettingClosed);
+            updateBettingLockUI();
+            alert(isBettingClosed ? 'Прием ставок закрыт администратором.' : 'Прием ставок открыт!');
+        }
+
+        // Таймер до ближайшей субботы 18:00
+        function updateCountdown() {
+            const now = new Date();
+            let target = new Date();
+            let dayOfWeek = now.getDay();
+            let distance = (6 - dayOfWeek + 7) % 7;
+            
+            if (distance === 0 && (now.getHours() > 18 || (now.getHours() === 18 && now.getMinutes() > 0))) {
+                distance = 7;
+            }
+            
+            target.setDate(now.getDate() + distance);
+            target.setHours(18, 0, 0, 0);
+
+            const diff = target - now;
+
+            if (diff <= 0) {
+                document.getElementById('countdown').innerText = 'Время вышло!';
+                return;
+            }
+
+            const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+            const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+            const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+            const seconds = Math.floor((diff % (1000 * 60)) / 1000);
+
+            document.getElementById('countdown').innerText = `${days}д ${hours}ч ${minutes}м ${seconds}с`;
+        }
+
+        setInterval(updateCountdown, 1000);
+        updateCountdown();
+
+        function updateUI() {
+            document.getElementById('totalA').innerText = totalA;
+            document.getElementById('totalB').innerText = totalB;
+            
+            const historyList = document.getElementById('historyList');
+            historyList.innerHTML = '';
+            
+            if (history.length === 0) {
+                historyList.innerHTML = '<li>Ставок пока нет...</li>';
+            } else {
+                history.forEach(item => {
+                    const li = document.createElement('li');
+                    li.innerText = item;
+                    historyList.appendChild(li);
+                });
+            }
+
+            if (isAdmin) {
+                renderAdminBets();
+            }
+        }
+
+        function placeBet(team) {
+            if (isBettingClosed) {
+                alert('Прием ставок завершен!');
+                return;
+            }
+
+            const inputId = team === 'A' ? 'amountA' : 'amountB';
+            const betAmount = parseInt(document.getElementById(inputId).value);
+
+            if (isNaN(betAmount) || betAmount <= 0) {
+                alert('Пожалуйста, введите корректную сумму для ставки!');
+                return;
+            }
+
+            const teamName = team === 'A' ? 'Наведавшие побед' : 'Накормим белого';
+
+            if (team === 'A') {
+                totalA += betAmount;
+                localStorage.setItem('totalA', totalA);
+            } else {
+                totalB += betAmount;
+                localStorage.setItem('totalB', totalB);
+            }
+
+            const record = `Ставка: ${betAmount} монет на ${teamName}`;
+            history.unshift(record);
+            if (history.length > 15) history.pop();
+            localStorage.setItem('history', JSON.stringify(history));
+
+            const betObj = {
+                id: Date.now() + Math.random(),
+                user: username,
+                team: teamName,
+                amount: betAmount,
+                teamCode: team
+            };
+            allBets.push(betObj);
+            localStorage.setItem('allBets', JSON.stringify(allBets));
+
+            updateUI();
+            alert(`Успешно! Вы поставили ${betAmount} монет на ${teamName}.`);
+        }
+
+        function renderAdminBets() {
+            const tbody = document.getElementById('adminBetsTableBody');
+            tbody.innerHTML = '';
+
+            if (allBets.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="4" style="text-align: center; color: #94a3b8;">Нет активных ставок</td></tr>';
+                return;
+            }
+
+            allBets.forEach((bet) => {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td>${bet.user}</td>
+                    <td style="color: ${bet.teamCode === 'A' ? '#38bdf8' : '#f43f5e'}; font-weight: bold;">${bet.team}</td>
+                    <td>${bet.amount} монет</td>
+                    <td><button class="delete-bet-btn" onclick="deleteBet('${bet.id}')">Удалить</button></td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        function deleteBet(betId) {
+            if (!confirm('Вы уверены, что хотите удалить эту ставку?')) return;
+
+            const index = allBets.findIndex(b => b.id == betId);
+            if (index !== -1) {
+                const bet = allBets[index];
+                
+                if (bet.teamCode === 'A' || bet.team === 'Наведавшие побед') {
+                    totalA = Math.max(0, totalA - bet.amount);
+                    localStorage.setItem('totalA', totalA);
+                } else {
+                    totalB = Math.max(0, totalB - bet.amount);
+                    localStorage.setItem('totalB', totalB);
+                }
+
+                allBets.splice(index, 1);
+                localStorage.setItem('allBets', JSON.stringify(allBets));
+
+                updateUI();
+                alert('Ставка удалена, банк команды пересчитан.');
+            }
+        }
+
+        function finishMatch(winningTeam) {
+            const winningTeamName = winningTeam === 'A' ? 'Наведавшие побед' : 'Накормим белого';
+            if (!confirm(`Подтвердить победу команды "${winningTeamName}"?`)) return;
+
+            const totalPool = totalA + totalB;
+            const winningPool = winningTeam === 'A' ? totalA : totalB;
+
+            if (winningPool === 0) {
+                alert('На победившую команду не было сделано ставок!');
+                return;
+            }
+
+            alert(`Матч завершен! Победила команда "${winningTeamName}". Общий банк: ${totalPool} монет.`);
+
+            totalA = 0;
+            totalB = 0;
+            allBets = [];
+            localStorage.setItem('totalA', totalA);
+            localStorage.setItem('totalB', totalB);
+            localStorage.setItem('allBets', JSON.stringify(allBets));
+            isBettingClosed = true;
+            localStorage.setItem('isBettingClosed', 'true');
+            updateBettingLockUI();
+            updateUI();
+        }
+
+        function resetVoting() {
+            if (confirm('Обнулить банки команд и все ставки пользователей?')) {
+                totalA = 0;
+                totalB = 0;
+                allBets = [];
+                history = [];
+                localStorage.setItem('totalA', totalA);
+                localStorage.setItem('totalB', totalB);
+                localStorage.setItem('allBets', JSON.stringify(allBets));
+                localStorage.setItem('history', JSON.stringify(history));
+                updateUI();
+                alert('Банки и список ставок сброшены.');
+            }
+        }
+
+        function resetAllData() {
+            if (confirm('ВНИМАНИЕ! Сбросить абсолютно всё (включая имя)?')) {
+                localStorage.clear();
+                location.reload();
+            }
+        }
+    </script>
+</body>
+</html>
